@@ -6,7 +6,13 @@ import {onMounted, ref} from "vue";
 import myAxios from "../plugins/myAxios.ts";
 import {showFailToast, showSuccessToast} from "vant";
 
+
+
 const router = useRouter();
+const searchText = ref('');
+
+
+
 const doJoinTeam = () =>{
   router.push({
     path: "/team/add"
@@ -14,22 +20,44 @@ const doJoinTeam = () =>{
 }
 
 const teamList = ref([]);
-//页面加载时触发一次 查询队伍
-onMounted(async () =>{
-  const res = await myAxios.get("/team/list");
+
+//队伍搜索方法
+const listTeam = async (val = '', status = 0) => {
+  const res = await myAxios.get("/team/list", {
+    params: {
+      searchText: val,
+      pageNum: 1,
+      status,
+    },
+  });
   if (res?.code === 0) {
+    showSuccessToast('加载成功');
     teamList.value = res.data;
-    showSuccessToast("队伍查询成功");
-  }else {
-    showFailToast("加载队伍失败");
+  } else {
+    showFailToast('加载队伍失败，请刷新重试');
   }
+}
+
+//页面加载时触发一次 查询队伍
+onMounted( () =>{
+  listTeam();
 })
+
+//搜索
+const onSearch = (val) => {
+  listTeam(val);
+}
+
+
+
 </script>
 
 <template>
   <div id="teamPage">
+    <van-search v-model="searchText" placeholder="搜索队伍" @search="onSearch" />
     <van-button type="primary" @click="doJoinTeam" >创建队伍</van-button>
-    <team-card-list :teamList="teamList"/>
+    <team-card-list :teamList="teamList" loading/>
+    <van-empty v-if="teamList?.length < 1" description="数据为空"/>
   </div>
 </template>
 

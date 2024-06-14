@@ -18,7 +18,7 @@
 
 import {useRoute, useRouter} from "vue-router"
 import myAxios from "../plugins/myAxios.ts";
-import {Toast} from "vant";
+import {showFailToast, showSuccessToast, Toast} from "vant";
 import {getCurrentUser} from "../services/user";
 import {ref} from "vue";
 
@@ -48,10 +48,10 @@ const onSubmit = async () => {
   })
   console.log(res,'更新请求')
   if (res.code === 0 && res.data >0){
-    Toast.success('修改成功');
+    showSuccessToast('修改成功');
     router.back();
   } else {
-    Toast.fail('修改错误');
+    showFailToast('修改错误');
   }
 
 };
