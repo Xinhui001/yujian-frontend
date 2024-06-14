@@ -44,5 +44,7 @@ showToast('提示内容');
 </template>
 
 <style scoped>
-
+#content {
+  padding-bottom: 50px;
+}
 </style>

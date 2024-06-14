@@ -29,7 +29,7 @@
 import {useRouter} from "vue-router";
 import {ref} from "vue";
 import myAxios from "../plugins/myAxios";
-import {Toast} from "vant";
+import {showFailToast, showSuccessToast} from "vant";
 
 const router = useRouter();
 
@@ -43,10 +43,10 @@ const onSubmit = async () => {
   })
   console.log(res,'用户登录');
   if (res.code == 0 && res.data){
-    Toast.success('登录成功');
+    showSuccessToast('登录成功');
     await router.replace('/');
   } else {
-    Toast.fail('登录失败')
+    showFailToast('登录失败')
   }
 };
 

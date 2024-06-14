@@ -2,7 +2,7 @@
   import {useRouter} from "vue-router";
   import {onMounted, ref} from "vue";
   import myAxios from "../plugins/myAxios.ts";
-  import {Toast} from "vant";
+  import {showFailToast, showSuccessToast} from "vant";
 
   // const user = {
   //   id : 123,
@@ -22,9 +22,9 @@
     const res = await myAxios.get('/user/current');
     if (res.code === 0){
       user.value = res.data;
-      Toast.success('获取用户信息成功');
+      showSuccessToast('获取用户信息成功');
     } else {
-      Toast.fail('获取用户信息失败')
+      showFailToast('获取用户信息失败')
     }
   })
   const toEdit = (editKey: string,editName: string,currentValue: string) =>{

@@ -20,7 +20,7 @@
 <script setup >
 import {onMounted, ref} from "vue";
 import {useRoute} from "vue-router";
-import {Toast} from "vant";
+import {showFailToast, showSuccessToast} from "vant";
 
 import myAxios from "../plugins/myAxios.ts";
 
@@ -54,23 +54,33 @@ onMounted( async () =>{
     },
 
     //序列化
-    paramsSerializer: {
-      serialize: params => qs.stringify(params, { indices: false}),
+    paramsSerializer: params =>  {
+      return qs.stringify(params, { indices: false})
     }
+    // paramsSerializer: {
+    //   serialize: params => qs.stringify(params, { indices: false}),
+    // }
   })
       .then(function (response) {
         console.log('/user/search/tags succeed',response);
-        Toast.success('请求成功');
-        return response.data?.data;
+        showSuccessToast('请求成功');
+        return response?.data;
       })
       .catch(function (error) {
         console.log('/user/search/tags error',error);
-        Toast.fail('请求失败');
+        showFailToast('请求失败');
       });
   if (userListData){
     userListData.forEach(user =>{
       if (user.tags){
-        user.tags = JSON.parse(user.tags);
+        //user.tags = JSON.parse(user.tags);
+        try {
+          user.tags = JSON.parse(user.tags);
+        } catch (error) {
+          console.error('Parsing error for user.tags:', error);
+          // 可以选择设置默认值或者跳过这个用户的tags
+          user.tags = [];
+        }
       }
     })
     userList.value = userListData;
