@@ -31,6 +31,12 @@
         <van-button size="mini" plain type="primary"
                     @click="doUpdateTeam(team.id)">更新队伍
         </van-button>
+        <van-button size="mini" plain type="primary"
+                    @click="doQuitTeam(team.id)">退出队伍
+        </van-button>
+        <van-button size="mini" plain type="primary"
+                    @click="doDeleteTeam(team.id)">解散队伍
+        </van-button>
       </template>
     </van-card>
   </div>
@@ -71,6 +77,29 @@ const doJoinTeam = async(id: number) =>{
   }
 }
 
+
+const doQuitTeam = async(id: number) =>{
+  const res = await myAxios.post("/team/quit",{
+    teamId : id
+  });
+  if (res?.code === 0){
+    showSuccessToast("退出成功")
+  }else {
+    showFailToast("退出失败");
+  }
+}
+
+
+const doDeleteTeam = async(id: number) =>{
+  const res = await myAxios.post("/team/delete",{
+    id
+  });
+  if (res?.code === 0){
+    showSuccessToast("解散成功")
+  }else {
+    showFailToast("解散失败");
+  }
+}
 
 const doUpdateTeam = (id: number) => {
   router.push({

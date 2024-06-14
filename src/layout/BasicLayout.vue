@@ -1,10 +1,24 @@
-<script setup>
+<script setup lang="ts">
 import {ref} from 'vue';
 import {showToast} from 'vant';
 import {useRouter} from "vue-router";
+import routes from "../config/route.ts";
 
-
+const DEFAULT_TITLE = '遇见';
+const title = ref(DEFAULT_TITLE);
 const router = useRouter();
+
+//根据页面切换标题
+router.beforeEach((to,from) => {
+  const toPath = to.path;
+  const route = routes.find((route) => {
+    return toPath === route.path;
+  })
+  title.value = route?.title ?? DEFAULT_TITLE;
+})
+
+
+
 const onClickLeft = () => {
   router.back();
 };
@@ -21,7 +35,7 @@ showToast('提示内容');
 
 <template>
   <van-nav-bar
-      title="标题"
+      :title="title"
       left-arrow
       @click-left="onClickLeft"
       @click-right="onClickRight"
