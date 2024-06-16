@@ -8,10 +8,23 @@ import {showFailToast, showSuccessToast} from "vant";
 
 
 
+const active = ref('public')
 const router = useRouter();
 const searchText = ref('');
 
-
+/**
+ * 切换查询状态
+ * @param name
+ */
+const onTabChange = (name) => {
+  // 查公开
+  if (name === 'public') {
+    listTeam(searchText.value, 0);
+  } else {
+    // 查加密
+    listTeam(searchText.value, 2);
+  }
+}
 
 const doJoinTeam = () =>{
   router.push({
@@ -45,7 +58,7 @@ onMounted( () =>{
 
 //搜索
 const onSearch = (val) => {
-  listTeam(val);
+  listTeam(val)
 }
 
 
@@ -55,6 +68,11 @@ const onSearch = (val) => {
 <template>
   <div id="teamPage">
     <van-search v-model="searchText" placeholder="搜索队伍" @search="onSearch" />
+    <van-tabs v-model:active="active" @change="onTabChange">
+      <van-tab title="公开" name="public" />
+      <van-tab title="加密" name="private" />
+    </van-tabs>
+    <div style="margin-bottom: 16px" />
     <van-button type="primary" @click="doJoinTeam" >创建队伍</van-button>
     <team-card-list :teamList="teamList" loading/>
     <van-empty v-if="teamList?.length < 1" description="数据为空"/>

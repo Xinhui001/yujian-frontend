@@ -8,6 +8,7 @@ export type TeamType = {
     id: number;
     username:string;
     name: string;
+    userId: number;
     description: string;
     expireTime?: Date;
     maxNum: number;
@@ -17,4 +18,6 @@ export type TeamType = {
     createTime: Date;
     updateTime: Date;
     createUser?: UserType;
+    hasJoinNum?: number;
+    hasJoin: boolean;
 };

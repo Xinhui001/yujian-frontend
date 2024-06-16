@@ -17,28 +17,34 @@
       </template>
       <template #bottom>
         <div>
-          {{'最大人数' + team.maxNum}}
+          {{`队伍人数: ${team.hasJoinNum}/${team.maxNum}` }}
         </div>
         <div>
-          {{'过期时间' + team.expireTime}}
+          {{'过期时间：' + team.expireTime}}
         </div>
         <div>
-          {{'创建时间' + team.createTime}}
+          {{'创建时间：' + team.createTime}}
         </div>
       </template>
       <template #footer>
-        <van-button size="mini" plain type="primary" @click="doJoinTeam(team.id)">加入队伍</van-button>
-        <van-button size="mini" plain type="primary"
+        <van-button size="mini" type="primary" v-if="team.userId !== currentUser?.id && !team.hasJoin" plain
+                    @click="preJoinTeam(team)">
+          加入队伍
+        </van-button>
+        <van-button v-if="team.userId === currentUser?.id" size="mini" plain type="primary"
                     @click="doUpdateTeam(team.id)">更新队伍
         </van-button>
-        <van-button size="mini" plain type="primary"
+        <van-button v-if="team.userId !== currentUser?.id && team.hasJoin" size="mini" plain type="primary"
                     @click="doQuitTeam(team.id)">退出队伍
         </van-button>
-        <van-button size="mini" plain type="primary"
+        <van-button v-if="team.userId === currentUser?.id" size="mini" plain type="primary"
                     @click="doDeleteTeam(team.id)">解散队伍
         </van-button>
       </template>
     </van-card>
+    <van-dialog v-model:show="showPasswordDialog" title="请输入密码" show-cancel-button @confirm="doJoinTeam" @cancel="doJoinCancel">
+      <van-field v-model="password" placeholder="请输入密码"/>
+    </van-dialog>
   </div>
 </template>
 
@@ -48,12 +54,35 @@ import {teamStatusEnum} from "../constants/team";
 import myAxios from "../plugins/myAxios";
 import {showFailToast, showSuccessToast} from "vant";
 import {useRouter} from "vue-router";
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
+import {getCurrentUser} from "../services/user.ts";
 
 
 const router = useRouter();
 
+const showPasswordDialog = ref(false);
+const password = ref('');
+const joinTeamId = ref(0);
 const currentUser = ref();
+
+
+onMounted(async () => {
+  currentUser.value = await getCurrentUser();
+})
+
+const preJoinTeam = (team: TeamType) => {
+  joinTeamId.value = team.id;
+  if (team.status === 0) {
+    doJoinTeam();
+  } else {
+    showPasswordDialog.value = true;
+  }
+}
+
+const doJoinCancel = () => {
+  joinTeamId.value = 0;
+  password.value = '';
+}
 
 
 interface TeamCardListProps{
@@ -66,17 +95,34 @@ const props = withDefaults(defineProps<TeamCardListProps>(),{
 });
 
 //队伍列表加入队伍
-const doJoinTeam = async(id: number) =>{
-  const res = await myAxios.post("/team/join",{
-    teamId : id
+// const doJoinTeam = async(id: number) =>{
+//   const res = await myAxios.post("/team/join",{
+//     teamId : id
+//   });
+//   if (res?.code === 0){
+//     showSuccessToast("加入成功")
+//   }else {
+//     showFailToast("加入失败");
+//   }
+// }
+/**
+ * 加入队伍
+ */
+const doJoinTeam = async () => {
+  if (!joinTeamId.value) {
+    return;
+  }
+  const res = await myAxios.post('/team/join', {
+    teamId: joinTeamId.value,
+    password: password.value
   });
-  if (res?.code === 0){
-    showSuccessToast("加入成功")
-  }else {
-    showFailToast("加入失败");
+  if (res?.code === 0) {
+    showSuccessToast('加入成功');
+    doJoinCancel();
+  } else {
+    showFailToast('加入失败');
   }
 }
-
 
 const doQuitTeam = async(id: number) =>{
   const res = await myAxios.post("/team/quit",{
