@@ -1,4 +1,10 @@
 <template>
+  <van-swipe class="my-swipe" :autoplay="3000" indicator-color="white">
+    <van-swipe-item>广告位招租1</van-swipe-item>
+    <van-swipe-item>广告位招租2</van-swipe-item>
+    <van-swipe-item>广告位招租3</van-swipe-item>
+    <van-swipe-item>广告位招租4</van-swipe-item>
+  </van-swipe>
   <van-card
       v-for="user in userList"
       :desc="user.profile"
@@ -15,6 +21,7 @@
     </template>
   </van-card>
   <van-empty v-if="!userList || userList.length < 1" description="Loading..." />
+
 </template>
 
 <script setup >
@@ -87,5 +94,11 @@ onMounted( async () =>{
 </script>
 
 <style scoped>
-
+.my-swipe .van-swipe-item {
+  color: #fff;
+  font-size: 20px;
+  line-height: 150px;
+  text-align: center;
+  background-color: #39a9ed;
+}
 </style>

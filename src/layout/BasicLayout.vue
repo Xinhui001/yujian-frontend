@@ -31,6 +31,7 @@ const onChange = (index) => showToast(`标签 ${index}`);
 
 showToast('提示内容');
 
+
 </script>
 
 <template>
@@ -45,6 +46,7 @@ showToast('提示内容');
     </template>
   </van-nav-bar>
 
+
   <div id="content">
     <router-view/>
   </div>
@@ -54,6 +56,7 @@ showToast('提示内容');
     <van-tabbar-item to="/team" icon="search" name="team">队伍</van-tabbar-item>
     <van-tabbar-item to="/user" icon="friends-o" name="user">个人</van-tabbar-item>
   </van-tabbar>
+
 
 </template>
 
